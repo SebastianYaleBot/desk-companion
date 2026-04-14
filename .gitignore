@@ -1,0 +1,28 @@
+# Godot
+.godot/
+*.import
+export_presets.cfg
+
+# Asset packs (purchased - do not redistribute)
+assets/tiles/Modern_Interiors*/
+assets/tiles/Modern_Office*/
+assets/tiles/Room_Builder*/
+assets/characters/Character_Generator/
+assets/characters/Premade*/
+assets/characters/Body_*/
+assets/animated/
+
+# Keep the assets directory structure
+!assets/.gitkeep
+!assets/tiles/.gitkeep
+!assets/characters/.gitkeep
+!assets/animated/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+server/venv/
+
+# OS
+.DS_Store
+Thumbs.db

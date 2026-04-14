@@ -1,0 +1,61 @@
+[gd_scene load_steps=7 format=3 uid="uid://main_scene"]
+
+[ext_resource type="Script" path="res://scripts/room_manager.gd" id="1_room"]
+[ext_resource type="Script" path="res://scripts/behavior_state_machine.gd" id="2_behavior"]
+[ext_resource type="Script" path="res://scripts/time_manager.gd" id="3_time"]
+[ext_resource type="Script" path="res://scripts/data_bridge.gd" id="4_bridge"]
+[ext_resource type="PackedScene" path="res://scenes/sabby.tscn" id="5_sabby"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_room"]
+vertices = PackedVector2Array(48, 48, 912, 48, 912, 672, 48, 672)
+polygons = [PackedInt32Array(0, 1, 2, 3)]
+outlines = [PackedVector2Array(48, 48, 912, 48, 912, 672, 48, 672)]
+
+[node name="Room" type="Node2D"]
+script = ExtResource("1_room")
+
+[node name="AmbientLight" type="CanvasModulate" parent="."]
+color = Color(1, 1, 1, 1)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_room")
+
+[node name="Floor" type="TileMapLayer" parent="NavigationRegion2D"]
+metadata/tile_info = "Add your Room Builder tileset here. Use Godot TileSet editor to import Room_Builder_48x48.png and Room_Builder_Office_48x48.png"
+
+[node name="Walls" type="TileMapLayer" parent="NavigationRegion2D"]
+z_index = 1
+
+[node name="Furniture" type="TileMapLayer" parent="NavigationRegion2D"]
+z_index = 2
+
+[node name="Sabby" parent="NavigationRegion2D" instance=ExtResource("5_sabby")]
+position = Vector2(480, 360)
+
+[node name="Waypoints" type="Node2D" parent="."]
+
+[node name="desk" type="Marker2D" parent="Waypoints"]
+position = Vector2(300, 250)
+
+[node name="window" type="Marker2D" parent="Waypoints"]
+position = Vector2(480, 80)
+
+[node name="coffee_machine" type="Marker2D" parent="Waypoints"]
+position = Vector2(800, 400)
+
+[node name="door" type="Marker2D" parent="Waypoints"]
+position = Vector2(100, 600)
+
+[node name="center" type="Marker2D" parent="Waypoints"]
+position = Vector2(480, 360)
+
+[node name="BehaviorStateMachine" type="Node" parent="."]
+script = ExtResource("2_behavior")
+character = NodePath("../NavigationRegion2D/Sabby")
+waypoints = NodePath("../Waypoints")
+
+[node name="TimeManager" type="Node" parent="."]
+script = ExtResource("3_time")
+
+[node name="DataBridge" type="Node" parent="."]
+script = ExtResource("4_bridge")

@@ -1,0 +1,40 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; but it can also be edited via text.
+
+[application]
+
+config/name="Desk Companion"
+config/description="P-113: Sebastian Desk Companion — Autonomous ambient desk companion"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/mode=0
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
+[input]
+
+touch={
+"deadzone": 0.5,
+"events": []
+}
+
+[layer_names]
+
+2d_physics/layer_1="walls"
+2d_physics/layer_2="furniture"
+2d_physics/layer_3="character"
+2d_physics/layer_4="interactive_zones"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0.15, 0.15, 0.18, 1)
