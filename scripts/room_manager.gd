@@ -2,11 +2,14 @@
 ## This is the main orchestration script for the desk companion.
 extends Node2D
 
-@onready var character: SabbyCharacter = $Sabby
+@onready var character: SabbyCharacter = $NavigationRegion2D/Sabby
 @onready var behavior: BehaviorStateMachine = $BehaviorStateMachine
 @onready var time_mgr: TimeManager = $TimeManager
 @onready var data_bridge: DataBridge = $DataBridge
 @onready var ambient_light: CanvasModulate = $AmbientLight
+@onready var time_label: Label = $StatusBar/TimeLabel
+@onready var weather_label: Label = $StatusBar/WeatherLabel
+@onready var behavior_label: Label = $StatusBar/BehaviorLabel
 
 func _ready() -> void:
 	# Wire up signals
@@ -30,8 +33,21 @@ func _on_data_updated(data: Dictionary) -> void:
 	if weather.has("condition"):
 		_react_to_weather(weather["condition"])
 
+func _process(_delta: float) -> void:
+	# Update status bar
+	if time_label:
+		var h: int = time_mgr.get_hour()
+		var m: int = time_mgr.get_minute()
+		var ampm: String = "AM" if h < 12 else "PM"
+		var display_h: int = h % 12
+		if display_h == 0:
+			display_h = 12
+		time_label.text = "Time: %d:%02d %s" % [display_h, m, ampm]
+
 func _on_behavior_changed(old_state: String, new_state: String) -> void:
-	# Debug logging — useful during development
+	if behavior_label:
+		var display_name: String = new_state.replace("_", " ").capitalize()
+		behavior_label.text = "Sabby: " + display_name
 	if old_state != "":
 		print("[Behavior] ", old_state, " → ", new_state)
 	else:

@@ -106,6 +106,7 @@ func _direction_suffix() -> String:
 
 func _play_walk() -> void:
 	var anim := "walk_" + _direction_suffix()
+	_apply_flip()
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim):
 		if sprite.animation != anim:
 			sprite.play(anim)
@@ -115,13 +116,19 @@ func _play_walk() -> void:
 
 func _play_idle() -> void:
 	var anim := "idle_" + _direction_suffix()
+	_apply_flip()
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim):
 		if sprite.animation != anim:
 			sprite.play(anim)
 	elif sprite.sprite_frames and sprite.sprite_frames.has_animation("idle_down"):
 		sprite.play("idle_down")
-	elif sprite.sprite_frames and sprite.sprite_frames.has_animation("default"):
-		sprite.play("default")
+
+func _apply_flip() -> void:
+	## idle_right uses left-facing frames with horizontal flip
+	if current_direction == Direction.RIGHT:
+		sprite.flip_h = true
+	else:
+		sprite.flip_h = false
 
 func _get_action_anim(action_name: String) -> String:
 	# Map behavior actions to animation names

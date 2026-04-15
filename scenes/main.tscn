@@ -1,15 +1,18 @@
-[gd_scene load_steps=7 format=3 uid="uid://main_scene"]
+[gd_scene load_steps=8 format=3 uid="uid://main_room"]
 
 [ext_resource type="Script" path="res://scripts/room_manager.gd" id="1_room"]
 [ext_resource type="Script" path="res://scripts/behavior_state_machine.gd" id="2_behavior"]
 [ext_resource type="Script" path="res://scripts/time_manager.gd" id="3_time"]
 [ext_resource type="Script" path="res://scripts/data_bridge.gd" id="4_bridge"]
-[ext_resource type="PackedScene" path="res://scenes/sabby.tscn" id="5_sabby"]
+[ext_resource type="PackedScene" uid="uid://sabby_char" path="res://scenes/sabby.tscn" id="5_sabby"]
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_room"]
-vertices = PackedVector2Array(48, 48, 912, 48, 912, 672, 48, 672)
+[sub_resource type="NavigationPolygon" id="NavPoly_room"]
+vertices = PackedVector2Array(72, 168, 888, 168, 888, 600, 72, 600)
 polygons = [PackedInt32Array(0, 1, 2, 3)]
-outlines = [PackedVector2Array(48, 48, 912, 48, 912, 672, 48, 672)]
+outlines = [PackedVector2Array(72, 168, 888, 168, 888, 600, 72, 600)]
+
+[sub_resource type="RectangleShape2D" id="RectShape_zone"]
+size = Vector2(120, 120)
 
 [node name="Room" type="Node2D"]
 script = ExtResource("1_room")
@@ -17,37 +20,249 @@ script = ExtResource("1_room")
 [node name="AmbientLight" type="CanvasModulate" parent="."]
 color = Color(1, 1, 1, 1)
 
+[node name="Background" type="ColorRect" parent="."]
+offset_left = 0
+offset_top = 0
+offset_right = 1280
+offset_bottom = 720
+color = Color(0.12, 0.13, 0.16, 1)
+
+[node name="Floor" type="ColorRect" parent="."]
+offset_left = 48
+offset_top = 144
+offset_right = 912
+offset_bottom = 624
+color = Color(0.85, 0.85, 0.82, 1)
+
+[node name="WallBack" type="ColorRect" parent="."]
+offset_left = 48
+offset_top = 96
+offset_right = 912
+offset_bottom = 168
+color = Color(0.95, 0.95, 0.95, 1)
+
+[node name="WallBackTrim" type="ColorRect" parent="."]
+offset_left = 48
+offset_top = 160
+offset_right = 912
+offset_bottom = 168
+color = Color(0.4, 0.4, 0.45, 1)
+
+[node name="WallLeft" type="ColorRect" parent="."]
+offset_left = 48
+offset_top = 96
+offset_right = 72
+offset_bottom = 624
+color = Color(0.88, 0.88, 0.88, 1)
+
+[node name="WallRight" type="ColorRect" parent="."]
+offset_left = 888
+offset_top = 96
+offset_right = 912
+offset_bottom = 624
+color = Color(0.88, 0.88, 0.88, 1)
+
+[node name="WallBottom" type="ColorRect" parent="."]
+offset_left = 48
+offset_top = 600
+offset_right = 912
+offset_bottom = 624
+color = Color(0.75, 0.75, 0.75, 1)
+
+[node name="WindowSky" type="ColorRect" parent="."]
+offset_left = 300
+offset_top = 100
+offset_right = 660
+offset_bottom = 158
+color = Color(0.55, 0.75, 0.92, 1)
+
+[node name="WindowFrame1" type="ColorRect" parent="."]
+offset_left = 298
+offset_top = 98
+offset_right = 474
+offset_bottom = 160
+color = Color(0.25, 0.25, 0.3, 1)
+
+[node name="WindowGlass1" type="ColorRect" parent="."]
+offset_left = 302
+offset_top = 102
+offset_right = 470
+offset_bottom = 156
+color = Color(0.6, 0.78, 0.95, 1)
+
+[node name="WindowMullion1" type="ColorRect" parent="."]
+offset_left = 384
+offset_top = 98
+offset_right = 388
+offset_bottom = 160
+color = Color(0.25, 0.25, 0.3, 1)
+
+[node name="WindowFrame2" type="ColorRect" parent="."]
+offset_left = 486
+offset_top = 98
+offset_right = 662
+offset_bottom = 160
+color = Color(0.25, 0.25, 0.3, 1)
+
+[node name="WindowGlass2" type="ColorRect" parent="."]
+offset_left = 490
+offset_top = 102
+offset_right = 658
+offset_bottom = 156
+color = Color(0.6, 0.78, 0.95, 1)
+
+[node name="WindowMullion2" type="ColorRect" parent="."]
+offset_left = 572
+offset_top = 98
+offset_right = 576
+offset_bottom = 160
+color = Color(0.25, 0.25, 0.3, 1)
+
+[node name="DeskTop" type="ColorRect" parent="."]
+offset_left = 160
+offset_top = 240
+offset_right = 400
+offset_bottom = 312
+color = Color(0.82, 0.72, 0.58, 1)
+
+[node name="DeskShadow" type="ColorRect" parent="."]
+offset_left = 160
+offset_top = 308
+offset_right = 400
+offset_bottom = 316
+color = Color(0.65, 0.55, 0.42, 1)
+
+[node name="Monitor1" type="ColorRect" parent="."]
+offset_left = 200
+offset_top = 228
+offset_right = 256
+offset_bottom = 260
+color = Color(0.15, 0.15, 0.2, 1)
+
+[node name="Monitor1Screen" type="ColorRect" parent="."]
+offset_left = 203
+offset_top = 231
+offset_right = 253
+offset_bottom = 255
+color = Color(0.3, 0.5, 0.8, 1)
+
+[node name="Monitor2" type="ColorRect" parent="."]
+offset_left = 270
+offset_top = 228
+offset_right = 326
+offset_bottom = 260
+color = Color(0.15, 0.15, 0.2, 1)
+
+[node name="Monitor2Screen" type="ColorRect" parent="."]
+offset_left = 273
+offset_top = 231
+offset_right = 323
+offset_bottom = 255
+color = Color(0.3, 0.5, 0.8, 1)
+
+[node name="CubicleDiv1" type="ColorRect" parent="."]
+offset_left = 432
+offset_top = 200
+offset_right = 440
+offset_bottom = 400
+color = Color(0.7, 0.7, 0.72, 1)
+
+[node name="CoffeeMachine" type="ColorRect" parent="."]
+offset_left = 800
+offset_top = 170
+offset_right = 860
+offset_bottom = 210
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="CoffeeCounter" type="ColorRect" parent="."]
+offset_left = 780
+offset_top = 210
+offset_right = 880
+offset_bottom = 260
+color = Color(0.9, 0.9, 0.88, 1)
+
+[node name="Plant1" type="ColorRect" parent="."]
+offset_left = 100
+offset_top = 140
+offset_right = 130
+offset_bottom = 170
+color = Color(0.3, 0.6, 0.35, 1)
+
+[node name="Plant2" type="ColorRect" parent="."]
+offset_left = 860
+offset_top = 560
+offset_right = 890
+offset_bottom = 600
+color = Color(0.3, 0.6, 0.35, 1)
+
+[node name="StatusBar" type="ColorRect" parent="."]
+offset_left = 960
+offset_top = 48
+offset_right = 1232
+offset_bottom = 672
+color = Color(0.18, 0.19, 0.22, 1)
+
+[node name="StatusTitle" type="Label" parent="StatusBar"]
+offset_left = 20
+offset_top = 20
+offset_right = 252
+offset_bottom = 48
+text = "DESK COMPANION"
+horizontal_alignment = 1
+
+[node name="TimeLabel" type="Label" parent="StatusBar"]
+offset_left = 20
+offset_top = 60
+offset_right = 252
+offset_bottom = 88
+text = "Time: --:--"
+horizontal_alignment = 1
+
+[node name="WeatherLabel" type="Label" parent="StatusBar"]
+offset_left = 20
+offset_top = 100
+offset_right = 252
+offset_bottom = 128
+text = "Weather: --"
+horizontal_alignment = 1
+
+[node name="BehaviorLabel" type="Label" parent="StatusBar"]
+offset_left = 20
+offset_top = 140
+offset_right = 252
+offset_bottom = 168
+text = "Sabby: idle"
+horizontal_alignment = 1
+
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_room")
-
-[node name="Floor" type="TileMapLayer" parent="NavigationRegion2D"]
-metadata/tile_info = "Add your Room Builder tileset here. Use Godot TileSet editor to import Room_Builder_48x48.png and Room_Builder_Office_48x48.png"
-
-[node name="Walls" type="TileMapLayer" parent="NavigationRegion2D"]
-z_index = 1
-
-[node name="Furniture" type="TileMapLayer" parent="NavigationRegion2D"]
-z_index = 2
+navigation_polygon = SubResource("NavPoly_room")
 
 [node name="Sabby" parent="NavigationRegion2D" instance=ExtResource("5_sabby")]
-position = Vector2(480, 360)
+position = Vector2(280, 350)
+z_index = 10
 
 [node name="Waypoints" type="Node2D" parent="."]
 
 [node name="desk" type="Marker2D" parent="Waypoints"]
-position = Vector2(300, 250)
+position = Vector2(280, 320)
 
 [node name="window" type="Marker2D" parent="Waypoints"]
-position = Vector2(480, 80)
+position = Vector2(480, 200)
 
 [node name="coffee_machine" type="Marker2D" parent="Waypoints"]
-position = Vector2(800, 400)
+position = Vector2(820, 260)
 
 [node name="door" type="Marker2D" parent="Waypoints"]
-position = Vector2(100, 600)
+position = Vector2(150, 560)
 
 [node name="center" type="Marker2D" parent="Waypoints"]
-position = Vector2(480, 360)
+position = Vector2(500, 400)
+
+[node name="cubicle_area" type="Marker2D" parent="Waypoints"]
+position = Vector2(600, 350)
+
+[node name="plant_corner" type="Marker2D" parent="Waypoints"]
+position = Vector2(860, 560)
 
 [node name="BehaviorStateMachine" type="Node" parent="."]
 script = ExtResource("2_behavior")
