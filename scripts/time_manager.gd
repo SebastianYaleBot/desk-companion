@@ -23,13 +23,15 @@ func _ready() -> void:
 	_update_period()
 
 func _process(_delta: float) -> void:
-	var hour := Time.get_time_dict_from_system()["hour"]
+	var time_dict: Dictionary = Time.get_time_dict_from_system()
+	var hour: int = int(time_dict["hour"])
 	if hour != _last_hour:
 		_last_hour = hour
 		_update_period()
 
 func _update_period() -> void:
-	var hour: int = Time.get_time_dict_from_system()["hour"]
+	var time_dict: Dictionary = Time.get_time_dict_from_system()
+	var hour: int = int(time_dict["hour"])
 	var old_period := current_period
 	
 	if hour >= 6 and hour < 10:

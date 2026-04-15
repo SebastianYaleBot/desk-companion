@@ -77,5 +77,5 @@ func force_poll() -> void:
 func has_data() -> bool:
 	return not _last_data.is_empty()
 
-func is_connected() -> bool:
+func is_bridge_connected() -> bool:
 	return _connected
