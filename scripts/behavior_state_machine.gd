@@ -54,6 +54,12 @@ func _ready() -> void:
 	# Start first behavior after a short delay
 	_wait_and_pick(1.0)
 
+## Swap the active waypoints node (called when a new room loads).
+## Safe to call at runtime. Current behavior is allowed to finish naturally.
+func set_waypoints(new_waypoints: Node2D) -> void:
+	waypoints = new_waypoints
+	_build_waypoint_map()
+
 func _process(delta: float) -> void:
 	match current_state:
 		State.WAITING:

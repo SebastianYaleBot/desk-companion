@@ -3,20 +3,19 @@
 *.import
 export_presets.cfg
 
-# Asset packs (purchased - do not redistribute)
-assets/tiles/Modern_Interiors*/
-assets/tiles/Modern_Office*/
-assets/tiles/Room_Builder*/
-assets/characters/Character_Generator/
-assets/characters/Premade*/
-assets/characters/Body_*/
-assets/animated/
+# Asset packs (purchased - do not redistribute under LimeZu license)
+# Match both files and directories
+assets/tiles/**
+assets/characters/**
+assets/animated/**
 
-# Keep the assets directory structure
-!assets/.gitkeep
+# But keep the directory structure + README files tracked
 !assets/tiles/.gitkeep
+!assets/tiles/README.md
 !assets/characters/.gitkeep
+!assets/characters/README.md
 !assets/animated/.gitkeep
+!assets/animated/README.md
 
 # Python
 __pycache__/

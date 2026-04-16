@@ -1,8 +1,21 @@
-## Room manager — ties together the room, character, behaviors, and data.
-## This is the main orchestration script for the desk companion.
+## App-level manager for the Desk Companion.
+## This is the root orchestrator, attached to main.tscn.
+##
+## Responsibilities:
+##   - Load the active room scene into RoomHolder
+##   - Re-parent Sabby + re-wire the BehaviorStateMachine waypoints on room change
+##   - Drive the status sidebar (clock, weather, current behavior)
+##   - Hold TimeManager, DataBridge (app-level, not room-specific)
+##
+## Rooms are dumb containers (see scripts/room.gd).
+## Behavior and character state persist across room transitions.
 extends Node2D
 
-@onready var character: SabbyCharacter = $NavigationRegion2D/Sabby
+## The room that loads on startup.
+@export var starting_room: PackedScene
+
+@onready var room_holder: Node2D = $RoomHolder
+@onready var character: SabbyCharacter = $Sabby if has_node("Sabby") else null
 @onready var behavior: BehaviorStateMachine = $BehaviorStateMachine
 @onready var time_mgr: TimeManager = $TimeManager
 @onready var data_bridge: DataBridge = $DataBridge
@@ -10,31 +23,69 @@ extends Node2D
 @onready var time_label: Label = $StatusBar/TimeLabel
 @onready var weather_label: Label = $StatusBar/WeatherLabel
 @onready var behavior_label: Label = $StatusBar/BehaviorLabel
+@onready var room_label: Label = $StatusBar/RoomLabel if has_node("StatusBar/RoomLabel") else null
+
+var current_room: Room = null
 
 func _ready() -> void:
 	# Wire up signals
 	time_mgr.time_period_changed.connect(_on_time_changed)
 	data_bridge.data_updated.connect(_on_data_updated)
 	behavior.behavior_changed.connect(_on_behavior_changed)
-	
-	# Set initial ambient
+
+	# Load the starting room
+	if starting_room:
+		load_room(starting_room)
+	else:
+		push_warning("[App] No starting_room assigned on AppRoot — scene will be empty.")
+
 	_update_ambient()
-	
-	print("[Room] Desk Companion started — ", time_mgr.get_period_name())
+	print("[App] Desk Companion started — ", time_mgr.get_period_name())
+
+
+## Load a new room scene, replacing the current one.
+## Re-parents Sabby to the new room's nav region and rewires the behavior
+## state machine to the new waypoints.
+func load_room(room_scene: PackedScene) -> void:
+	# Clear any existing room
+	for child in room_holder.get_children():
+		child.queue_free()
+
+	var new_room: Room = room_scene.instantiate() as Room
+	if new_room == null:
+		push_error("[App] Room scene does not use room.gd as root — cannot load.")
+		return
+	room_holder.add_child(new_room)
+	current_room = new_room
+
+	# Move Sabby into the new room's nav region and position at spawn point
+	if character:
+		var old_parent := character.get_parent()
+		if old_parent:
+			old_parent.remove_child(character)
+		new_room.get_nav_region().add_child(character)
+		character.global_position = new_room.get_spawn_position()
+
+	# Point the behavior state machine at the new room's waypoints
+	behavior.set_waypoints(new_room.get_waypoints_node())
+
+	if room_label:
+		room_label.text = "Room: " + (new_room.room_display_name if new_room.room_display_name != "" else new_room.room_id)
+
+	print("[App] Loaded room: ", new_room.room_id)
+
 
 func _on_time_changed(period: String) -> void:
-	print("[Room] Time period: ", period)
+	print("[App] Time period: ", period)
 	_update_ambient()
 	_adjust_behaviors_for_time()
 
 func _on_data_updated(data: Dictionary) -> void:
-	# React to weather, status, etc.
 	var weather: Dictionary = data.get("weather", {})
 	if weather.has("condition"):
 		_react_to_weather(weather["condition"])
 
 func _process(_delta: float) -> void:
-	# Update status bar
 	if time_label:
 		var h: int = time_mgr.get_hour()
 		var m: int = time_mgr.get_minute()
@@ -56,12 +107,10 @@ func _on_behavior_changed(old_state: String, new_state: String) -> void:
 func _update_ambient() -> void:
 	if ambient_light:
 		var target_color := time_mgr.get_ambient_color()
-		# Smooth transition with tween
 		var tween := create_tween()
 		tween.tween_property(ambient_light, "color", target_color, 2.0)
 
 func _adjust_behaviors_for_time() -> void:
-	# During work hours, more desk work; evenings, more relaxed behaviors
 	if time_mgr.is_work_hours():
 		behavior.set_behavior_weight("sit_at_desk", 35)
 		behavior.set_behavior_weight("type_at_desk", 30)
@@ -75,8 +124,6 @@ func _adjust_behaviors_for_time() -> void:
 		behavior.set_behavior_weight("stretch", 10)
 
 func _react_to_weather(condition: String) -> void:
-	# Future: adjust window backdrop, change Sabby's behavior
-	# e.g., if raining, Sabby looks at window more often
 	match condition:
 		"rain", "drizzle", "thunderstorm":
 			behavior.set_behavior_weight("look_at_window", 20)

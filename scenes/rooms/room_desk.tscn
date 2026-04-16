@@ -1,0 +1,61 @@
+[gd_scene load_steps=5 format=3 uid="uid://room_desk"]
+
+[ext_resource type="Script" path="res://scripts/room.gd" id="1_room"]
+[ext_resource type="TileSet" uid="uid://office_tileset" path="res://resources/office_tileset.tres" id="2_tileset"]
+
+[sub_resource type="NavigationPolygon" id="NavPoly_desk"]
+vertices = PackedVector2Array(48, 96, 912, 96, 912, 624, 48, 624)
+polygons = [PackedInt32Array(0, 1, 2, 3)]
+outlines = [PackedVector2Array(48, 96, 912, 96, 912, 624, 48, 624)]
+
+[node name="Room" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_room")
+room_id = "desk"
+room_display_name = "Desk Area"
+
+[node name="FloorLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_tileset")
+
+[node name="WallLayer" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = ExtResource("2_tileset")
+
+[node name="FurnitureLayer" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = ExtResource("2_tileset")
+
+[node name="AboveCharLayer" type="TileMapLayer" parent="."]
+z_index = 100
+tile_set = ExtResource("2_tileset")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavPoly_desk")
+
+[node name="Waypoints" type="Node2D" parent="."]
+
+[node name="desk" type="Marker2D" parent="Waypoints"]
+position = Vector2(280, 320)
+
+[node name="window" type="Marker2D" parent="Waypoints"]
+position = Vector2(480, 200)
+
+[node name="coffee_machine" type="Marker2D" parent="Waypoints"]
+position = Vector2(820, 260)
+
+[node name="door" type="Marker2D" parent="Waypoints"]
+position = Vector2(150, 560)
+
+[node name="center" type="Marker2D" parent="Waypoints"]
+position = Vector2(500, 400)
+
+[node name="cubicle_area" type="Marker2D" parent="Waypoints"]
+position = Vector2(600, 350)
+
+[node name="plant_corner" type="Marker2D" parent="Waypoints"]
+position = Vector2(860, 560)
+
+[node name="InteractiveZones" type="Node2D" parent="."]
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(280, 350)
