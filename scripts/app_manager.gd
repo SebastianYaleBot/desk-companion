@@ -15,7 +15,7 @@ extends Node2D
 @export var starting_room: PackedScene
 
 @onready var room_holder: Node2D = $RoomHolder
-@onready var character: SabbyCharacter = $Sabby if has_node("Sabby") else null
+@onready var character: SabbyCharacter = get_node_or_null("Sabby") as SabbyCharacter
 @onready var behavior: BehaviorStateMachine = $BehaviorStateMachine
 @onready var time_mgr: TimeManager = $TimeManager
 @onready var data_bridge: DataBridge = $DataBridge
@@ -23,7 +23,7 @@ extends Node2D
 @onready var time_label: Label = $StatusBar/TimeLabel
 @onready var weather_label: Label = $StatusBar/WeatherLabel
 @onready var behavior_label: Label = $StatusBar/BehaviorLabel
-@onready var room_label: Label = $StatusBar/RoomLabel if has_node("StatusBar/RoomLabel") else null
+@onready var room_label: Label = get_node_or_null("StatusBar/RoomLabel") as Label
 
 var current_room: Room = null
 

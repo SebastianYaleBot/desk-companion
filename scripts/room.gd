@@ -25,7 +25,7 @@ class_name Room
 @onready var nav_region: NavigationRegion2D = $NavigationRegion2D
 @onready var waypoints: Node2D = $Waypoints
 @onready var interactive_zones: Node2D = $InteractiveZones
-@onready var spawn_point: Marker2D = $SpawnPoint if has_node("SpawnPoint") else null
+@onready var spawn_point: Marker2D = get_node_or_null("SpawnPoint") as Marker2D
 
 func _ready() -> void:
 	print("[Room] Loaded: ", room_id if room_id != "" else name)
