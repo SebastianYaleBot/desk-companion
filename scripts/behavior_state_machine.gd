@@ -60,6 +60,16 @@ func set_waypoints(new_waypoints: Node2D) -> void:
 	waypoints = new_waypoints
 	_build_waypoint_map()
 
+## Assign (or re-assign) the character reference at runtime.
+## Called by app_manager during room setup to guarantee the reference
+## is alive even if scene-file NodePath resolution ever hiccups.
+func set_character(new_character: SabbyCharacter) -> void:
+	if character and character.arrived_at_target.is_connected(_on_arrived):
+		character.arrived_at_target.disconnect(_on_arrived)
+	character = new_character
+	if character:
+		character.arrived_at_target.connect(_on_arrived)
+
 func _process(delta: float) -> void:
 	match current_state:
 		State.WAITING:
@@ -86,12 +96,18 @@ func _wait_and_pick(duration: float) -> void:
 	_wait_duration = duration
 
 func _pick_next_behavior() -> void:
+	# Defensive: if character is gone (e.g. during scene transition) just wait.
+	if not is_instance_valid(character):
+		push_warning("[Behavior] Character is invalid at pick time. Waiting.")
+		_wait_and_pick(1.0)
+		return
+
 	var old := current_behavior
 	current_behavior = _weighted_random_pick()
 	behavior_changed.emit(old, current_behavior)
-	
+
 	var waypoint_name: String = behavior_waypoints.get(current_behavior, "")
-	
+
 	if waypoint_name == "":
 		# In-place action or random walk
 		if current_behavior == "walk_around":
@@ -108,7 +124,7 @@ func _pick_next_behavior() -> void:
 			_start_action()
 
 func _walk_to_random_waypoint() -> void:
-	if _waypoint_map.is_empty():
+	if _waypoint_map.is_empty() or not is_instance_valid(character):
 		_start_action()
 		return
 	var keys := _waypoint_map.keys()
@@ -119,10 +135,12 @@ func _walk_to_random_waypoint() -> void:
 func _start_action() -> void:
 	current_state = State.ACTING
 	_action_timer = 0.0
-	character.play_action(current_behavior)
+	if is_instance_valid(character):
+		character.play_action(current_behavior)
 
 func _finish_current_action() -> void:
-	character.finish_action()
+	if is_instance_valid(character):
+		character.finish_action()
 	# Brief pause before next behavior
 	_wait_and_pick(randf_range(1.0, 3.0))
 

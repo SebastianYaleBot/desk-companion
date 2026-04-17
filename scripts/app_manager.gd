@@ -33,6 +33,14 @@ func _ready() -> void:
 	data_bridge.data_updated.connect(_on_data_updated)
 	behavior.behavior_changed.connect(_on_behavior_changed)
 
+	# Defensively (re-)bind the character reference. The scene file already
+	# sets behavior.character via NodePath, but Godot's typed @export
+	# resolution has been flaky on first project load — this guarantees it.
+	if character:
+		behavior.set_character(character)
+	else:
+		push_error("[App] Sabby not found under AppRoot — behaviors will be inert.")
+
 	# Load the starting room
 	if starting_room:
 		load_room(starting_room)
