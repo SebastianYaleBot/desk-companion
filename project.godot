@@ -7,7 +7,7 @@
 config/name="Desk Companion"
 config/description="P-113: Sebastian Desk Companion — Autonomous ambient desk companion"
 run/main_scene="res://scenes/main.tscn"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+config/features=PackedStringArray("4.6", "GL Compatibility")
 
 [display]
 
