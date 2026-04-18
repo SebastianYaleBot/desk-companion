@@ -70,6 +70,8 @@ func play_action(action_name: String) -> void:
 	velocity = Vector2.ZERO
 	
 	var anim_name := _get_action_anim(action_name)
+	_apply_flip(anim_name)
+	
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim_name):
 		sprite.play(anim_name)
 		action_started.emit(action_name)
@@ -106,7 +108,7 @@ func _direction_suffix() -> String:
 
 func _play_walk() -> void:
 	var anim := "walk_" + _direction_suffix()
-	_apply_flip()
+	_apply_flip(anim)
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim):
 		if sprite.animation != anim:
 			sprite.play(anim)
@@ -116,19 +118,22 @@ func _play_walk() -> void:
 
 func _play_idle() -> void:
 	var anim := "idle_" + _direction_suffix()
-	_apply_flip()
+	_apply_flip(anim)
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim):
 		if sprite.animation != anim:
 			sprite.play(anim)
 	elif sprite.sprite_frames and sprite.sprite_frames.has_animation("idle_down"):
 		sprite.play("idle_down")
 
-func _apply_flip() -> void:
-	## idle_right uses left-facing frames with horizontal flip
-	if current_direction == Direction.RIGHT:
+func _apply_flip(anim: String) -> void:
+	# The Modern Interiors spritesheet has explicit frames for all 4 directions for Walk and Idle.
+	# So we DO NOT flip those by default.
+	sprite.flip_h = false
+	
+	# However, the "Sit" animation is only drawn facing right.
+	# If we are supposed to be sitting facing left, flip it!
+	if current_direction == Direction.LEFT and "sit" in anim:
 		sprite.flip_h = true
-	else:
-		sprite.flip_h = false
 
 func _get_action_anim(action_name: String) -> String:
 	# Map behavior actions to animation names
