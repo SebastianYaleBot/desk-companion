@@ -36,6 +36,15 @@ func _physics_process(_delta: float) -> void:
 		return
 	
 	var next_pos := nav_agent.get_next_path_position()
+	
+	# Godot 4.6 Pathfinding Fix: If we get a (0,0) or exact same position, pathing failed
+	if next_pos == Vector2.ZERO or global_position.distance_squared_to(next_pos) < 1.0:
+		_is_moving = false
+		velocity = Vector2.ZERO
+		_play_idle()
+		arrived_at_target.emit()
+		return
+		
 	var direction := global_position.direction_to(next_pos)
 	
 	# If we are somehow stuck or trying to reach an unreachable point, prevent spinning
