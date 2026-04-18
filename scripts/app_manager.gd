@@ -83,7 +83,10 @@ func load_room(room_scene: PackedScene) -> void:
 	behavior.set_waypoints(new_room.get_waypoints_node())
 
 	if room_label:
-		room_label.text = "Room: " + (new_room.room_display_name if new_room.room_display_name != "" else new_room.room_id)
+		var room_name = new_room.room_id
+		if new_room.room_display_name != "":
+			room_name = new_room.room_display_name
+		room_label.text = "Room: " + room_name
 
 	print("[App] Loaded room: ", new_room.room_id)
 
@@ -102,7 +105,9 @@ func _process(_delta: float) -> void:
 	if time_label:
 		var h: int = time_mgr.get_hour()
 		var m: int = time_mgr.get_minute()
-		var ampm: String = "AM" if h < 12 else "PM"
+		var ampm: String = "AM"
+		if h >= 12:
+			ampm = "PM"
 		var display_h: int = h % 12
 		if display_h == 0:
 			display_h = 12

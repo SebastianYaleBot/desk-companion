@@ -94,9 +94,15 @@ func is_acting() -> bool:
 
 func _update_direction(dir: Vector2) -> void:
 	if abs(dir.x) > abs(dir.y):
-		current_direction = Direction.RIGHT if dir.x > 0 else Direction.LEFT
+		if dir.x > 0:
+			current_direction = Direction.RIGHT
+		else:
+			current_direction = Direction.LEFT
 	else:
-		current_direction = Direction.DOWN if dir.y > 0 else Direction.UP
+		if dir.y > 0:
+			current_direction = Direction.DOWN
+		else:
+			current_direction = Direction.UP
 
 func _direction_suffix() -> String:
 	match current_direction:

@@ -28,7 +28,10 @@ class_name Room
 @onready var spawn_point: Marker2D = get_node_or_null("SpawnPoint") as Marker2D
 
 func _ready() -> void:
-	print("[Room] Loaded: ", room_id if room_id != "" else name)
+	var room_id_to_print = name
+	if room_id != "":
+		room_id_to_print = room_id
+	print("[Room] Loaded: ", room_id_to_print)
 
 ## Return the Node2D containing all Marker2D waypoints for this room.
 func get_waypoints_node() -> Node2D:
