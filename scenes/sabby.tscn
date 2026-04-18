@@ -202,6 +202,7 @@ animations = [{"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture
 radius = 12.0
 
 [node name="Sabby" type="CharacterBody2D"]
+z_index = 10
 collision_layer = 4
 script = ExtResource("2_script")
 move_speed = 80.0
