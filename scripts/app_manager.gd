@@ -71,7 +71,12 @@ func load_room(room_scene: PackedScene) -> void:
 		var old_parent := character.get_parent()
 		if old_parent:
 			old_parent.remove_child(character)
-		new_room.get_nav_region().add_child(character)
+		var nav_reg = new_room.get_nav_region()
+		if nav_reg:
+			nav_reg.add_child(character)
+		else:
+			push_warning("[App] Room ", new_room.room_id, " has no NavigationRegion2D. Sabby will be parented directly to room.")
+			new_room.add_child(character)
 		character.global_position = new_room.get_spawn_position()
 
 	# Point the behavior state machine at the new room's waypoints

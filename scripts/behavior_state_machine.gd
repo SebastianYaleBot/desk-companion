@@ -115,12 +115,13 @@ func _pick_next_behavior() -> void:
 		else:
 			_start_action()
 	else:
-		var target_pos: Vector2 = _waypoint_map.get(waypoint_name, Vector2.ZERO)
-		if target_pos != Vector2.ZERO:
+		if _waypoint_map.has(waypoint_name):
+			var target_pos: Vector2 = _waypoint_map[waypoint_name]
 			current_state = State.WALKING
 			character.move_to(target_pos)
 		else:
 			# Waypoint not found, just do action in place
+			push_warning("[Behavior] Waypoint not found: ", waypoint_name, ". Doing action in-place.")
 			_start_action()
 
 func _walk_to_random_waypoint() -> void:

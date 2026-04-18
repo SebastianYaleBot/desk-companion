@@ -49,7 +49,8 @@ func _run() -> void:
         "sit_up":       {"row": 1, "cols": [6, 7, 8, 9, 10, 11]}, # Fallback to idle
         "sit_down":     {"row": 1, "cols": [18, 19, 20, 21, 22, 23]}, # Fallback to idle
         
-        "phone_right":  {"row": 4, "cols": [6, 7, 8, 9, 10, 11]}
+        "check_phone_right":  {"row": 4, "cols": [6, 7, 8, 9, 10, 11]},
+        "check_phone_left":   {"row": 4, "cols": [6, 7, 8, 9, 10, 11]} # Flip handled in controller
     }
     
     for anim_name in anim_map:

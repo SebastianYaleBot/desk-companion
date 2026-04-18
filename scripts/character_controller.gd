@@ -130,12 +130,20 @@ func _apply_flip(anim: String) -> void:
 	# So we DO NOT flip those by default.
 	sprite.flip_h = false
 	
-	# However, the "Sit" animation is only drawn facing right.
-	# If we are supposed to be sitting facing left, flip it!
-	if current_direction == Direction.LEFT and "sit" in anim:
+	# However, the "Sit" and "Phone" animations are only drawn facing right.
+	# If we are supposed to be sitting/phoning facing left, flip it!
+	if current_direction == Direction.LEFT and ("sit" in anim or "phone" in anim):
 		sprite.flip_h = true
 
 func _get_action_anim(action_name: String) -> String:
 	# Map behavior actions to animation names
+	var base_anim = action_name
+	
+	# Alias specific behaviors to base sprite animations
+	if action_name == "sit_at_desk" or action_name == "type_at_desk":
+		base_anim = "sit"
+	elif action_name == "look_at_window" or action_name == "get_coffee" or action_name == "look_around" or action_name == "stretch" or action_name == "walk_around":
+		base_anim = "idle"
+		
 	var suffix := _direction_suffix()
-	return action_name + "_" + suffix
+	return base_anim + "_" + suffix
