@@ -12,11 +12,11 @@ var _last_hour: int = -1
 
 ## Colors for ambient lighting by time period
 var period_colors: Dictionary = {
-	Period.MORNING: Color(1.0, 0.95, 0.85, 1.0),    # warm sunrise
+	Period.MORNING: Color(1.0, 0.98, 0.94, 1.0),    # very subtle warm morning
 	Period.MIDDAY: Color(1.0, 1.0, 1.0, 1.0),        # neutral daylight
-	Period.AFTERNOON: Color(1.0, 0.98, 0.92, 1.0),    # warm afternoon
-	Period.EVENING: Color(0.85, 0.8, 0.9, 1.0),       # cool twilight
-	Period.NIGHT: Color(0.5, 0.5, 0.65, 1.0),         # blue night
+	Period.AFTERNOON: Color(1.0, 0.99, 0.96, 1.0),    # very subtle warm afternoon
+	Period.EVENING: Color(0.92, 0.88, 0.95, 1.0),       # subtle cool twilight
+	Period.NIGHT: Color(0.65, 0.65, 0.75, 1.0),         # softer blue night
 }
 
 func _ready() -> void:
