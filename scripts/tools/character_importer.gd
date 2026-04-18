@@ -95,8 +95,12 @@ func _run() -> void:
     for anim_name in anim_map:
         frames.add_animation(anim_name)
         frames.set_animation_speed(anim_name, 6.0)
-        frames.set_animation_loop(anim_name, true)
-        
+        # We need walking animations to loop!
+        if "walk" in anim_name:
+            frames.set_animation_loop(anim_name, true)
+        else:
+            frames.set_animation_loop(anim_name, true) # Default to loop anyway for idle/sit
+            
         var data = anim_map[anim_name]
         var row_idx = data["row"]
         for col_idx in data["cols"]:

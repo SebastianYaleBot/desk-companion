@@ -37,6 +37,15 @@ func _physics_process(_delta: float) -> void:
 	
 	var next_pos := nav_agent.get_next_path_position()
 	var direction := global_position.direction_to(next_pos)
+	
+	# If we are somehow stuck or trying to reach an unreachable point, prevent spinning
+	if nav_agent.distance_to_target() < 10.0:
+		_is_moving = false
+		velocity = Vector2.ZERO
+		_play_idle()
+		arrived_at_target.emit()
+		return
+		
 	var desired_velocity := direction * move_speed
 	
 	# Use avoidance if available, otherwise move directly
@@ -93,6 +102,10 @@ func is_acting() -> bool:
 	return _current_action != ""
 
 func _update_direction(dir: Vector2) -> void:
+	# Avoid flickering if the direction vector is incredibly small
+	if dir.length_squared() < 0.01:
+		return
+		
 	if abs(dir.x) > abs(dir.y):
 		if dir.x > 0:
 			current_direction = Direction.RIGHT
