@@ -132,14 +132,9 @@ func _play_idle() -> void:
 		sprite.play("idle_down")
 
 func _apply_flip(anim: String) -> void:
-	# The Modern Interiors spritesheet has explicit frames for all 4 directions for Walk and Idle.
-	# So we DO NOT flip those by default.
+	# Since the character generator exports 4 separate directions for
+	# every animation, we NO LONGER NEED TO FLIP ANYTHING manually!
 	sprite.flip_h = false
-	
-	# However, the "Sit" and "Phone" animations are only drawn facing right.
-	# If we are supposed to be sitting/phoning facing left, flip it!
-	if current_direction == Direction.LEFT and ("sit" in anim or "phone" in anim):
-		sprite.flip_h = true
 
 func _get_action_anim(action_name: String) -> String:
 	# Map behavior actions to animation names

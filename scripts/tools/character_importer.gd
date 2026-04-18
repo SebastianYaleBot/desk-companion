@@ -26,31 +26,70 @@ func _run() -> void:
     if frames.has_animation("default"):
         frames.remove_animation("default")
         
-    # Row indices are based on 96px height blocks.
-    # Row 1 (y=96): Idle (Right, Up, Left, Down - 6 frames each)
-    # Row 2 (y=192): Walk (Right, Up, Left, Down - 6 frames each)
-    # Row 4 (y=384): Sit Right (0-5), Phone Right (6-11)
+    # Row 1 is y=96. Col 18 is x = 18 * 48 = 864. But notice there's a 6-pixel gap.
+    # The actual character pixels start at y=117 according to check_gaps_v2.gd
+    # So if we slice at y=96, the head starts at y=117 (21px padding).
+    
+    # In Godot, Row 0 is y=0, Row 1 is y=96, Row 2 is y=192, Row 4 is y=384.
+    # Wait, earlier script check_gaps_v3 said:
+    # y=24 to y=95 (directional)
+    # y=117 to y=191 (Right-facing walking)
+    # y=213 to y=287 (Right-facing running)
+    # y=294 to y=344 (Front-facing squished dome)
+    
+    # Let's map everything based on the 96px slice strategy since it successfully prevented clipping.
+    # The columns are 6 frames each (288px wide blocks per direction or action).
+    
+    # We found out that the character generator spits out horizontal grids!
+    # A single row contains Right, Up, Left, Down for the SAME animation.
+    # y=96  (Row 1): Idle
+    # y=192 (Row 2): Walk
+    # y=384 (Row 4): Sit/Phone
+    
+    # BUT wait, the image analysis of rows 0-8 of the first 6 columns showed:
+    # y=96  (Row 1): Right-facing Walking
+    # y=192 (Row 2): Right-facing Running
+    # y=384 (Row 4): Right-facing Sitting/Crawling
+    
+    # The character generator exports an entirely different layout than the generic LimeZu sheet!
+    # The first 6 columns (x=0 to x=287) are ALL right-facing actions.
+    # The next 6 columns (x=288 to x=575) are ALL up-facing actions.
+    # The next 6 columns (x=576 to x=863) are ALL left-facing actions.
+    # The next 6 columns (x=864 to x=1151) are ALL down-facing actions.
+    
+    # Let's map the actions by row index (y / 96):
+    # Row 0: Idle (y=0)
+    # Row 1: Walk (y=96)
+    # Row 2: Run (y=192)
+    # Row 3: Squish (y=288)
+    # Row 4: Sit/Scoot (y=384)
+    # Row 9: Walk (y=864) -- wait, there are duplicate rows.
+    
+    # Let's just use Row 0 for Idle, Row 1 for Walk, Row 4 for Sit!
     
     var anim_map = {
-        "idle_right":   {"row": 1, "cols": [0, 1, 2, 3, 4, 5]},
-        "idle_up":      {"row": 1, "cols": [6, 7, 8, 9, 10, 11]},
-        "idle_left":    {"row": 1, "cols": [12, 13, 14, 15, 16, 17]},
-        "idle_down":    {"row": 1, "cols": [18, 19, 20, 21, 22, 23]},
+        "idle_right":   {"row": 0, "cols": [0, 1, 2, 3, 4, 5]},
+        "idle_up":      {"row": 0, "cols": [6, 7, 8, 9, 10, 11]},
+        "idle_left":    {"row": 0, "cols": [12, 13, 14, 15, 16, 17]},
+        "idle_down":    {"row": 0, "cols": [18, 19, 20, 21, 22, 23]},
         
-        "walk_right":   {"row": 2, "cols": [0, 1, 2, 3, 4, 5]},
-        "walk_up":      {"row": 2, "cols": [6, 7, 8, 9, 10, 11]},
-        "walk_left":    {"row": 2, "cols": [12, 13, 14, 15, 16, 17]},
-        "walk_down":    {"row": 2, "cols": [18, 19, 20, 21, 22, 23]},
+        "walk_right":   {"row": 1, "cols": [0, 1, 2, 3, 4, 5]},
+        "walk_up":      {"row": 1, "cols": [6, 7, 8, 9, 10, 11]},
+        "walk_left":    {"row": 1, "cols": [12, 13, 14, 15, 16, 17]},
+        "walk_down":    {"row": 1, "cols": [18, 19, 20, 21, 22, 23]},
         
-        # Sitting only has Right-facing sprites in this pack by default.
-        # We will map sit_left to use the same frames, but we'll flip the sprite in code.
+        # Sit is row 4
         "sit_right":    {"row": 4, "cols": [0, 1, 2, 3, 4, 5]},
-        "sit_left":     {"row": 4, "cols": [0, 1, 2, 3, 4, 5]}, # Flip handled in controller
-        "sit_up":       {"row": 1, "cols": [6, 7, 8, 9, 10, 11]}, # Fallback to idle
-        "sit_down":     {"row": 1, "cols": [18, 19, 20, 21, 22, 23]}, # Fallback to idle
+        "sit_up":       {"row": 4, "cols": [6, 7, 8, 9, 10, 11]}, 
+        "sit_left":     {"row": 4, "cols": [12, 13, 14, 15, 16, 17]}, 
+        "sit_down":     {"row": 4, "cols": [18, 19, 20, 21, 22, 23]}, 
         
-        "check_phone_right":  {"row": 4, "cols": [6, 7, 8, 9, 10, 11]},
-        "check_phone_left":   {"row": 4, "cols": [6, 7, 8, 9, 10, 11]} # Flip handled in controller
+        # Phone: The generator doesn't output "phone" explicitly in this block layout,
+        # but let's fall back to sitting idle.
+        "check_phone_right":  {"row": 4, "cols": [0, 1, 2, 3, 4, 5]},
+        "check_phone_up":     {"row": 4, "cols": [6, 7, 8, 9, 10, 11]},
+        "check_phone_left":   {"row": 4, "cols": [12, 13, 14, 15, 16, 17]},
+        "check_phone_down":   {"row": 4, "cols": [18, 19, 20, 21, 22, 23]}
     }
     
     for anim_name in anim_map:
