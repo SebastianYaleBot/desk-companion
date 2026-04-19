@@ -19,8 +19,9 @@ var _is_moving: bool = false
 var _current_action: String = ""
 
 func _ready() -> void:
-	nav_agent.path_desired_distance = 4.0
-	nav_agent.target_desired_distance = 4.0
+	# Loosen the pathfinding tolerances to prevent micro-jitter/spinning
+	nav_agent.path_desired_distance = 15.0
+	nav_agent.target_desired_distance = 15.0
 	nav_agent.velocity_computed.connect(_on_velocity_computed)
 	_play_idle()
 
@@ -48,7 +49,7 @@ func _physics_process(_delta: float) -> void:
 	var direction := global_position.direction_to(next_pos)
 	
 	# If we are somehow stuck or trying to reach an unreachable point, prevent spinning
-	if nav_agent.distance_to_target() < 10.0:
+	if nav_agent.distance_to_target() < 15.0:
 		_is_moving = false
 		velocity = Vector2.ZERO
 		_play_idle()
@@ -73,6 +74,12 @@ func _on_velocity_computed(safe_velocity: Vector2) -> void:
 ## Move to a world position using navigation
 func move_to(target_pos: Vector2) -> void:
 	nav_agent.target_position = target_pos
+	# Check immediately if the point is reachable to avoid 1-frame glitches
+	if not nav_agent.is_target_reachable():
+		push_warning("[Sabby] Target ", target_pos, " is unreachable! Aborting move.")
+		stop()
+		arrived_at_target.emit()
+		return
 	_is_moving = true
 
 ## Stop moving immediately
